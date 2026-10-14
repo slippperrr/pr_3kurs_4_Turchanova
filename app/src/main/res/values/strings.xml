@@ -19,6 +19,11 @@
     <string name="mytren">Моя тренировка</string>
     <string name="clear">Отчистить</string>
     <string name="back">Назад</string>
+    
+    <string name="one">Такая запись уже существует</string>
+    <string name="two">Данные сохранены</string>
+    <string name="no_save">Нет сохранённых тренировок</string>
+    <string name="data_clear">Данные очищены</string>
 
     <string-array name="training_types">
         <item>Бег</item>

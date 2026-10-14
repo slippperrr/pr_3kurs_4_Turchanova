@@ -1,36 +1,37 @@
 package com.example.turchanova
 
+import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import com.google.gson.Gson
 
-class MainActivity3 : AppCompatActivity() {
+class MainActivity3 : Fragment(R.layout.activity_main3) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main3)
+        super.onViewCreated(view,  savedInstanceState)
+        val textTraining = view.findViewById<TextView>(R.id.textTraining)
+        val buttonClear = view.findViewById<Button>(R.id.buttonClear)
+        val buttonBack = view.findViewById<Button>(R.id.buttonBack)
 
-        val textTraining = findViewById<TextView>(R.id.textTraining)
-        val buttonClear = findViewById<Button>(R.id.buttonClear)
-        val buttonBack = findViewById<Button>(R.id.buttonBack)
-
-        val preferences = getSharedPreferences("training_preferences", MODE_PRIVATE)
+        val preferences = requireContext().getSharedPreferences("training_preferences", Context.MODE_PRIVATE)
         showTrainings(textTraining, preferences)
-        buttonBack.setOnClickListener {
-            finish()
-        }
 
+        buttonBack.setOnClickListener {
+            parentFragmentManager.beginTransaction().replace(R.id.fragment, MainActivity2()).commit()
+        }
 
         buttonClear.setOnClickListener {
             preferences.edit().clear().apply()
-            textTraining.text = "Нет сохранённых тренировок"
+            textTraining.text = getString(R.string.no_save)
             Toast.makeText(
-                this,
-                "Данные очищены",
+                requireContext(),
+                R.string.data_clear,
                 Toast.LENGTH_SHORT
             ).show()
         }
@@ -48,7 +49,7 @@ class MainActivity3 : AppCompatActivity() {
         }
 
         if (list.isNullOrEmpty()) {
-            textTraining.text = "Нет сохранённых тренировок"
+            textTraining.text = getString(R.string.no_save)
             return
         }
 

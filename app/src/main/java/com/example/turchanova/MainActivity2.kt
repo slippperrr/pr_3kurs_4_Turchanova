@@ -1,7 +1,9 @@
 package com.example.turchanova
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
@@ -9,23 +11,20 @@ import android.widget.Spinner
 import androidx.appcompat.app.AppCompatActivity
 import com.google.gson.Gson
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 
-class MainActivity2 : AppCompatActivity() {
+class MainActivity2 :  Fragment(R.layout.activity_main2){
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main2)
-
-        val spinner = findViewById<Spinner>(R.id.spinner)
-        val spinnerFrom = findViewById<Spinner>(R.id.spinnerFrom)
-        val spinnerTo = findViewById<Spinner>(R.id.spinnerTo)
-        val spinnerDay = findViewById<Spinner>(R.id.spinnerDay)
-        val opisan = findViewById<EditText>(R.id.opisan)
-        val buttonSave = findViewById<Button>(R.id.buttonSave)
-        val buttonNext = findViewById<Button>(R.id.buttonNext)
-
-        val trainingAdapter = ArrayAdapter.createFromResource(
-            this,
+        super.onViewCreated(view,  savedInstanceState)
+        val spinner = view.findViewById<Spinner>(R.id.spinner)
+        val spinnerFrom = view.findViewById<Spinner>(R.id.spinnerFrom)
+        val spinnerTo = view.findViewById<Spinner>(R.id.spinnerTo)
+        val spinnerDay = view.findViewById<Spinner>(R.id.spinnerDay)
+        val opisan = view.findViewById<EditText>(R.id.opisan)
+        val buttonSave = view.findViewById<Button>(R.id.buttonSave)
+        val buttonNext = view.findViewById<Button>(R.id.buttonNext)
+        val trainingAdapter = ArrayAdapter.createFromResource(requireContext(),
             R.array.training_types,
             android.R.layout.simple_spinner_item
         )
@@ -35,7 +34,7 @@ class MainActivity2 : AppCompatActivity() {
         spinner.adapter = trainingAdapter
 
         val fromAdapter = ArrayAdapter.createFromResource(
-            this,
+            requireContext(),
             R.array.time_from,
             android.R.layout.simple_spinner_item
         )
@@ -45,7 +44,7 @@ class MainActivity2 : AppCompatActivity() {
         spinnerFrom.adapter = fromAdapter
 
         val toAdapter = ArrayAdapter.createFromResource(
-            this,
+            requireContext(),
             R.array.time_to,
             android.R.layout.simple_spinner_item
         )
@@ -55,7 +54,7 @@ class MainActivity2 : AppCompatActivity() {
         spinnerTo.adapter = toAdapter
 
         val dayAdapter = ArrayAdapter.createFromResource(
-            this,
+            requireContext(),
             R.array.days,
             android.R.layout.simple_spinner_item
         )
@@ -75,7 +74,7 @@ class MainActivity2 : AppCompatActivity() {
             )
 
             val gson = Gson()
-            val preferences = getSharedPreferences("training_preferences", MODE_PRIVATE)
+            val preferences = requireContext().getSharedPreferences("training_preferences", Context.MODE_PRIVATE)
             val json = preferences.getString("training_list", null)
             val list: MutableList<Training> = if (json != null) {
                 gson.fromJson(json, Array<Training>::class.java).toMutableList()
@@ -93,14 +92,13 @@ class MainActivity2 : AppCompatActivity() {
 
             if (alreadyExists) {
                 Toast.makeText(
-                    this,
-                    "Такая запись уже существует",
+                    requireContext(),
+                    R.string.one,
                     Toast.LENGTH_LONG
                 ).show()
                 return@setOnClickListener
             }
             list.add(0, training)
-
             while (list.size > 3) {
                 list.removeAt(list.size - 1)
             }
@@ -108,18 +106,13 @@ class MainActivity2 : AppCompatActivity() {
             preferences.edit()
                 .putString("training_list", newJson)
                 .apply()
-
-            //сохранение
-            Toast.makeText(this, "Данные сохранены", Toast.LENGTH_LONG).show()
+            Toast.makeText(requireContext(), R.string.two, Toast.LENGTH_LONG).show()
         }
 
         buttonNext.setOnClickListener {
 
-            val intent = Intent(
-                this,
-                MainActivity3::class.java
-            )
-            startActivity(intent)
+            parentFragmentManager.beginTransaction().replace(R.id.fragment, MainActivity3()).commit()
+
         }
     }
 }
